@@ -1,19 +1,6 @@
 import React, { useState } from 'react';
 import AppLayout from '@layout/app';
-import {
-  Breadcrumb,
-  Form,
-  Input,
-  Select,
-  Row,
-  Col,
-  Checkbox,
-  Button,
-  Upload,
-  Radio,
-  DatePicker,
-  message
-} from 'antd';
+import { Breadcrumb, Row, Col, Button, message } from 'antd';
 import Axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
