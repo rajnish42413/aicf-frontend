@@ -23,6 +23,7 @@ export default function Checkout() {
             payment_response_id: response.razorpay_payment_id,
             channel: 'razorpay',
         };
+        console.log(value);
         try {
             // const { data } = await Axios.post(`orders/${order?.id}/checkout`, value);
             // history.push('/payment/success', data);
