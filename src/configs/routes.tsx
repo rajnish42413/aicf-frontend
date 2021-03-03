@@ -7,7 +7,7 @@ const Home = React.lazy(() => import('../screens/home/Home'));
 const Register = React.lazy(() => import('../screens/register/index'));
 const Checkout = React.lazy(() => import('../screens/order/checkout'));
 const PaymentSuccess = React.lazy(() => import('../screens/order/success'));
-const Confirm = React.lazy(() => import('./../screens/register/Confirm'));
+const Confirm = React.lazy(() => import('../screens/register/confirm'));
 
 const publicPaths = [
   { exact: true, path: '/', component: Home },

@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import AppLayout from '@layout/app';
 import RegisterForm from '@components/RegisterForm';
-import { Breadcrumb, Form } from 'antd';
+import { Breadcrumb, Form, message } from 'antd';
 import { useHistory } from 'react-router-dom';
+import Axios  from 'axios';
 
-// tslint:disable-next-line:function-name
 export default function Register(props:any) {
   const history = useHistory();
-  const def = props?.history?.location?.state;
   const [btnLoading, setbtnLoading] = useState(false);
   const onFinish = (values: any) => {
 
@@ -21,7 +20,15 @@ export default function Register(props:any) {
 
   const handleSubmitForm = async (values:JSON) =>{
     setbtnLoading(false);
-    history.push({pathname:"/confirm",state:values})
+    try {
+    const {data}  =  await Axios.post(`contacts`,values);
+     if(data?.contact){
+      message.success("Registration data stored successfully.")
+      history.push('/confirm',data.contact);
+     }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 
@@ -32,7 +39,7 @@ export default function Register(props:any) {
         <Breadcrumb.Item>New Registration</Breadcrumb.Item>
       </Breadcrumb>
       <Form name="register" onFinish={onFinish} scrollToFirstError={true} layout="vertical">
-        <RegisterForm btnLoading={btnLoading} default={def}/>
+        <RegisterForm btnLoading={btnLoading}/>
       </Form>
     </AppLayout>
   );
