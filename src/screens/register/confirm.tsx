@@ -3,6 +3,7 @@ import AppLayout from '@layout/app';
 import { Breadcrumb, Button, message, Descriptions, Badge } from 'antd';
 import Axios from 'axios';
 import { useHistory, useLocation } from 'react-router-dom';
+import { RZ_AUTH } from '@constants/general';
 
 export default function Confirm(props: any) {
   const [btnLoading, setbtnLoading] = useState(false);
@@ -10,21 +11,41 @@ export default function Confirm(props: any) {
   const { state } = useLocation();
   const contact:any = state;
 
+  console.log(contact)
+
+  const dummy = {"status":"ok","message":"Inserted Successfully","contact":{"first_name":"rajnish","last_name":"singh","email":"rajnish42413@gmail.com","mobile":"8808100876","son_daughter_of":"ee","relationship":"Son","mother_tounge":"eee","gender":"M","address":"efre","city":"rere","district":"rer","state":"rere","updated_at":"2021-03-05T12:03:31.000000Z","created_at":"2021-03-05T12:03:31.000000Z","id":11}};
   const handleSubmitForm = async () => {
     const show = message.loading('Saving Values ...', 0);
     setbtnLoading(true);
     try {
-      const {data}  =  await Axios.post(`contacts`,contact);
+      // const {data}  =  await Axios.post(`contacts`,contact);
+      const data = dummy;
       setbtnLoading(false);
        if(data?.contact){
         message.success("Registration data stored successfully.");
-        history.push(`/checkout`, data.contact);
+        generateOrder(data.contact);
        }
     } catch (error) {
       setbtnLoading(false);
       setTimeout(show, 0);
     }
   };
+
+  const generateOrder = async (contact:any) =>{
+    try {
+      const {data} = await Axios.post(`https://api.razorpay.com/v1/orders`,{
+        "amount": 50,
+        "currency": "INR",
+        "receipt": `receipt#${contact?.id}`,
+      },{
+        auth:  RZ_AUTH
+      });
+      console.log(data);
+      history.push(`/checkout`, {contact,order:data});
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <AppLayout>
