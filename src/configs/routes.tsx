@@ -6,7 +6,7 @@ import 'nprogress/nprogress.css';
 const Home = React.lazy(() => import('../screens/home/Home'));
 const Register = React.lazy(() => import('../screens/register/index'));
 const Checkout = React.lazy(() => import('../screens/order/checkout'));
-const PaymentSuccess = React.lazy(() => import('../screens/order/success'));
+const PaymentStatus = React.lazy(() => import('../screens/order/status'));
 const Confirm = React.lazy(() => import('../screens/register/confirm'));
 
 const publicPaths = [
@@ -14,7 +14,7 @@ const publicPaths = [
   { exact: true, path: '/new-register', component: Register },
   { exact: true, path: '/confirm', component: Confirm },
   { exact: true, path: '/checkout', component: Checkout },
-  { exact: true, path: '/payment/success', component: PaymentSuccess }
+  { exact: true, path: '/payment/status', component: PaymentStatus }
 ];
 
 const publicRoutes = publicPaths.map(({ path, ...props }) => (

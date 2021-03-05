@@ -10,23 +10,19 @@ import Axios from 'axios';
 export default function Checkout() {
     const history = useHistory();
     const { state }:any = useLocation();
-    const data: any = state?.order;
-    const contact: any = data?.contact;
-    const order:any = data?.order;
+    const {contact, order}: any = state?.data;
     const [btnLoading, setbtnLoading] = useState(false);
 
-
     const handleCheckout = async (response: any) => {
+        console.log(response);
         setbtnLoading(true);
-
         const value = {
             payment_response_id: response.razorpay_payment_id,
             channel: 'razorpay',
         };
-        console.log(value);
         try {
-            // const { data } = await Axios.post(`orders/${order?.id}/checkout`, value);
-            // history.push('/payment/success', data);
+            const { data } = await Axios.put(`orders/${order?.id}`, value);
+            history.push('/payment/status', data);
             setbtnLoading(false);
             return;
         } catch (error) {
@@ -35,25 +31,22 @@ export default function Checkout() {
     };
 
     const handlePayment = async () => {
-
         if(!contact){
             message.error("Contact detail no found in our database");
         }
-
         if(!order?.amount){
           message.error("Order Amount not found");
         }
-
         const amount = order.amount;
         const options = {
-            key: 'rzp_test_hNtKQvpYRE730Z',
-            key_secret: 'kBrFjTWgJH20GZE2B0RJrXgZ',
-            amount: +(amount) * 100, // 2000 paise = INR 20, amount in paisa
-            name: 'ALL INDIA CHESS FEDERATION',
-            description: `ALL INDIA CHESS FEDERATION`,
-            callback_url:"https://aicf-app.netlify.app/checkout/",
-            order_id:order.id,
+            key: "rzp_test_hNtKQvpYRE730Z", 
+            amount: amount.toString(),
+            currency: "INR",
+            name: "ALL INDIA CHESS FEDERATION",
+            description: "ALL INDIA CHESS FEDERATION",
+            order_id: order?.order_id,
             handler(response: any) {
+                console.log(response);
                 handleCheckout(response);
             },
             prefill: {
@@ -62,20 +55,23 @@ export default function Checkout() {
                 contact: contact?.mobile,
             },
             notes: {
-                address: 'Hello World',
+                address: "ALL INDIA CHESS FEDERATION PAYMENT",
             },
-        }
-        const {data} = await Axios.post(`https://api.razorpay.com/v1/checkout/embedded`,options);
-
-        console.log(data);
+            theme: {
+                color: "#fff",
+            },
+        };
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
     };
 
     useEffect(() => {
-        // const script = document.createElement('script');
-        // script.src = 'https://api.razorpay.com/v1/checkout/embedded';
-        // script.async = true;
-        // document.body.appendChild(script);
-    }, [history]);
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        document.body.appendChild(script);
+        if (!order) return history.go(-1);
+    }, [history, order]);
 
 
     return (

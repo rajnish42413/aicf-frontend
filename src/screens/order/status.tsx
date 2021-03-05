@@ -1,22 +1,12 @@
-import React, {  useEffect } from 'react';
+import React from 'react';
 import { Button, Layout, Result } from 'antd';
 import { useLocation, useHistory } from 'react-router-dom';
 
 // tslint:disable-next-line:function-name
-function PaymentSuccess(props: any) {
+function PaymentStatus(props: any) {
   const { state }:any = useLocation();
   const history = useHistory();
-  const order  = state?.order;
-
-  const handleUserPackages = async () => {
-    // const { data } = await Axios.get(`user/active-packages`);
-    // props.setActivePackages(data);
-  };
-
-  useEffect(() => {
-    handleUserPackages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const {order}  = state;
 
   return (
     <Layout>
@@ -37,4 +27,4 @@ function PaymentSuccess(props: any) {
 }
 
 
-export default PaymentSuccess;
+export default PaymentStatus;
