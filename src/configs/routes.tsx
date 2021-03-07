@@ -1,6 +1,7 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Ploader from '@components/loader/PLoader';
+import nprogress from 'nprogress';
 import 'nprogress/nprogress.css';
 
 const Home = React.lazy(() => import('../screens/home/Home'));
@@ -17,8 +18,19 @@ const publicPaths = [
   { exact: true, path: '/payment/status', component: PaymentStatus }
 ];
 
+const PublicRoute = ({ path, ...props }: any) => {
+  React.useState(nprogress.start());
+  useEffect(() => {
+    nprogress.done();
+    return () => {
+      nprogress.start();
+    };
+  });
+  return <Route key={path} path={path} {...props} />;
+};
+
 const publicRoutes = publicPaths.map(({ path, ...props }) => (
-  <Route key={path} path={path} {...props} />
+  <PublicRoute key={path} path={path} {...props} />
 ));
 
 export default () => (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Form,
   Input,
@@ -14,20 +14,21 @@ import {
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { API_URL } from '../../constants/general';
+import Axios from 'axios';
+import Loader from './loader/Loader';
+import { IPlayerType } from '../../schemas/IPlayertypes.d';
 
 const dateFormat = 'DD-MM-YYYY';
 
-interface IProps {
-  btnLoading: boolean | { delay?: number | undefined } | undefined;
-  default?: any;
-}
+export default function RegisterFormItems(props: any) {
+  const { btnLoading, contact } = props;
+  const [playerTypes, setPlayerTypes] = useState<IPlayerType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-// tslint:disable-next-line:function-name
-export default function RegisterFormItems(Props: IProps) {
-  const { btnLoading } = Props;
-  const props = {
-    name: 'file',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+  const IFProps = {
+    name: 'image',
+    action: `${API_URL}contacts/add-image`,
     headers: {
       authorization: 'authorization-text'
     },
@@ -43,23 +44,34 @@ export default function RegisterFormItems(Props: IProps) {
     }
   };
 
-  return (
+  const getData = async () => {
+    setIsLoading(true);
+    const { data } = await Axios.get(`players`);
+    setPlayerTypes(data);
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    getData();
+  }, [])
+
+  return isLoading ? <Loader /> :
     <>
       <Row gutter={[30, 20]}>
         <Col span={8}>
           <Form.Item
             name="first_name"
             label="First Name"
+            initialValue={contact?.first_name}
             rules={[{ required: true, message: 'Please input your first name!' }]}
-            initialValue={Props?.default?.first_name}
           >
-            <Input />
+            <Input placeholder="First name" />
           </Form.Item>
         </Col>
 
         <Col span={8}>
-          <Form.Item initialValue={Props?.default?.middle_name} name="middle_name" label="Middle Name">
-            <Input />
+          <Form.Item name="middle_name" label="Middle Name" initialValue={contact?.middle_name}>
+            <Input placeholder="Middle name" />
           </Form.Item>
         </Col>
 
@@ -67,10 +79,10 @@ export default function RegisterFormItems(Props: IProps) {
           <Form.Item
             name="last_name"
             label="Last Name"
+            initialValue={contact?.last_name}
             rules={[{ required: true, message: 'Please input your last name!' }]}
-            initialValue={Props?.default?.last_name}
           >
-            <Input />
+            <Input placeholder="Last name" />
           </Form.Item>
         </Col>
       </Row>
@@ -78,8 +90,7 @@ export default function RegisterFormItems(Props: IProps) {
       <Row gutter={[30, 20]}>
         <Col span={12}>
           <Form.Item
-            initialValue={Props?.default?.email}
-
+            initialValue={contact?.email}
             name="email"
             label="Email"
             rules={[
@@ -87,21 +98,20 @@ export default function RegisterFormItems(Props: IProps) {
               { type: 'email', message: 'Please enter valid email' }
             ]}
           >
-            <Input />
+            <Input placeholder="Email" />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item
-            initialValue={Props?.default?.mobile}
-
             name="mobile"
+            initialValue={contact?.mobile}
             label="Mobile Number"
             rules={[
               { required: true, message: 'Please input your phone number!' },
               { max: 10, min: 10, message: 'Please enter valid phone number!' }
             ]}
           >
-            <Input type="number" />
+            <Input type="number" placeholder="Mobile number" />
           </Form.Item>
         </Col>
       </Row>
@@ -111,10 +121,9 @@ export default function RegisterFormItems(Props: IProps) {
       <Row gutter={[30, 20]}>
         <Col span={12}>
           <Form.Item
-            initialValue={Props?.default?.son_daughter_of}
-
             name="son_daughter_of"
             label="Son/Daugher of"
+            initialValue={contact?.son_daughter_of}
             rules={[
               {
                 required: true,
@@ -122,19 +131,18 @@ export default function RegisterFormItems(Props: IProps) {
               }
             ]}
           >
-            <Input />
-          </Form.Item>
+            <Input placeholder="father/mother or parent name" />
+          </Form.Item >
         </Col>
 
         <Col span={12}>
           <Form.Item
-            initialValue={Props?.default?.relationship}
-
             name="relationship"
+            initialValue={contact?.relationship}
             label="Relationship"
             rules={[{ required: true, message: 'Select Relationship' }]}
           >
-            <Select options={relation} />
+            <Select options={relation} placeholder="Select Relationship" />
           </Form.Item>
         </Col>
       </Row>
@@ -143,21 +151,20 @@ export default function RegisterFormItems(Props: IProps) {
 
       <Row gutter={[30, 40]}>
         <Col span={12}>
-          <Form.Item 
-            initialValue={Props?.default?.mother_tounge}
-          name="mother_tounge" label="Mother Tounge">
-            <Input />
+          <Form.Item
+            name="mother_tounge" label="Mother Tounge" initialValue={contact?.mother_tounge}>
+            <Input placeholder="eg. Hindi ,English or ...." />
           </Form.Item>
         </Col>
 
         <Col span={12}>
           <Form.Item
-            initialValue={Props?.default?.gender}
             name="gender"
             label="Gender"
+            initialValue={contact?.gender}
             rules={[{ required: true, message: 'Add Gender' }]}
           >
-            <Select options={gender} />
+            <Select options={gender} placeholder="Select Gender" />
           </Form.Item>
         </Col>
       </Row>
@@ -167,9 +174,7 @@ export default function RegisterFormItems(Props: IProps) {
       <Row gutter={[30, 20]}>
         <Col span={12}>
           <Form.Item
-            // initialValue={Props?.default?.DOB}
-          
-            name="DOB"
+            name="date_of_birth"
             label="Date of Birth"
             rules={[{ required: true, message: 'Select DOB' }]}
           >
@@ -179,89 +184,87 @@ export default function RegisterFormItems(Props: IProps) {
               disabledDate={disabledDate}
               format={dateFormat}
               placeholder="DD-MM-YYYY"
+              value={contact?.date_of_birth}
             />
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item 
-            initialValue={Props?.default?.address}
-          
-          name="address" label="Address">
-            <Input.TextArea rows={1} />
+          <Form.Item
+            initialValue={contact?.address}
+            name="address" label="Address">
+            <Input.TextArea rows={1} placeholder="Address" />
           </Form.Item>
         </Col>
       </Row>
 
       <Row gutter={[30, 20]}>
         <Col span={12}>
-          <Form.Item 
-            initialValue={Props?.default?.city}
-
-          name="city" label="City" rules={[{ required: true, message: 'Add City' }]}>
-            <Input />
+          <Form.Item
+            initialValue={contact?.city}
+            name="city" label="City" rules={[{ required: true, message: 'Add City' }]}>
+            <Input placeholder="City name" />
           </Form.Item>
         </Col>
 
         <Col span={12}>
           <Form.Item
-
-initialValue={Props?.default?.district}
-
             name="district"
+            initialValue={contact?.district}
             label="District"
-            rules={[{ required: true, message: 'Add City' }]}
+            rules={[{ required: true, message: 'Add District' }]}
           >
-            <Input />
+            <Input placeholder="District name" />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={[30, 20]}>
         <Col span={12}>
-          <Form.Item 
-            initialValue={Props?.default?.state}
-
-          name="state" label="State" rules={[{ required: true, message: 'Add City' }]}>
-            <Input />
+          <Form.Item
+            initialValue={contact?.state}
+            name="state" label="State" rules={[{ required: true, message: 'Add State' }]}>
+            <Input placeholder="State name" />
           </Form.Item>
         </Col>
       </Row>
-
-      {/* Row number 6 */}
 
       <Row gutter={[200, 20]} style={{ marginTop: 10, marginBottom: 20 }}>
         <Col>
-          <h3>Player Type</h3>
-          <Form.Item name="player_type">
-            <Checkbox value="player">Player</Checkbox>
-            <Checkbox value="arbiter">Arbiter</Checkbox>
-            <Checkbox value="coach">Coach</Checkbox>
+          <Form.Item 
+          name="player_type" 
+          label="Player Type" 
+          rules={[{ required: true }]}>
+            <Checkbox.Group >
+              {playerTypes?.map(item =>
+                <Checkbox value={item.id} key={item.slug}>{item.name}</Checkbox>
+              )}
+            </Checkbox.Group>
           </Form.Item>
         </Col>
         <Col>
-          <h3>Are you a PIO/OCI</h3>
-          <Form.Item name="POI">
-            <Radio>Yes</Radio>
-            <Radio>No</Radio>
+          <Form.Item name="poi" label="Are you a PIO/OCI" initialValue={contact?.poi}>
+            <Radio.Group>
+              <Radio value={true}>Yes</Radio>
+              <Radio value={false}>No</Radio>
+            </Radio.Group>
           </Form.Item>
         </Col>
       </Row>
 
-      {/* Row number 7 */}
 
       <Row style={{ marginTop: '30px' }}>
         <Col span={5}>
-          <Upload {...props}>
+          <Upload {...IFProps}>
             <Button type="default" icon={<UploadOutlined />}>
               Passport Size Photo
             </Button>
           </Upload>
 
           <p style={{ marginTop: 20 }}>
-            (jpg, png or gif images only. 160x200 pixels (width x height). Maximum size 1000 KB)
+            (jpg or png images only. 160x200 pixels (width x height). Maximum size 1000 KB)
           </p>
         </Col>
         <Col span={8} offset={4}>
-          <Upload {...props}>
+          <Upload {...IFProps}>
             <Button type="default" icon={<UploadOutlined />}>
               Birth Certificate
             </Button>
@@ -278,7 +281,6 @@ initialValue={Props?.default?.district}
         </Col>
       </Row>
     </>
-  );
 }
 
 function disabledDate(current: any) {
@@ -295,7 +297,8 @@ const relation = [
   { label: 'Daughter', value: 'Daugher' },
   { label: 'Son', value: 'Son' },
   { label: 'Husband', value: 'Husband' },
-  { label: 'Son', value: 'Son' },
   { label: 'Brother', value: 'Brother' },
   { label: 'Sister', value: 'Sister' }
 ];
+
+

@@ -10,7 +10,7 @@ import Axios from 'axios';
 export default function Checkout() {
     const history = useHistory();
     const { state }:any = useLocation();
-    const {contact, order}: any = state?.data;
+    const {contact, order}: any = state;
     const [btnLoading, setbtnLoading] = useState(false);
 
     const handleCheckout = async (response: any) => {
@@ -90,29 +90,3 @@ export default function Checkout() {
         </Layout>
     )
 }
-
-
-
-// const handlePayment = async () => {
-//     setbtnLoading(true);
-
-//     if(!contact){
-//         message.error("Contact detail no found in our database");
-//     }
-//     const amount = "500";
-
-//     const formData = new FormData();
-//     formData.append("key", "rzp_test_hNtKQvpYRE730Z");
-//     formData.append("key_secret", "kBrFjTWgJH20GZE2B0RJrXgZ");
-//     formData.append("amount", amount);
-//     formData.append("name", "ALL INDIA CHESS FEDERATION");
-//     formData.append("description", "ALL INDIA CHESS FEDERATION");
-//     formData.append("callback_url", "http://localhost:3000/checkout");
-//     formData.append("cancel_url", "http://localhost:3000/checkout");
-//     formData.append("prefill[name]", contact?.first_name);
-//     formData.append("prefill[email]", contact?.email);
-//     formData.append("prefill[contact]", contact?.mobile);
-//     formData.append("order_id", "eojurfeji782374");
-//     formData.append("notes", "");
-//     await Axios.post(`https://api.razorpay.com/v1/checkout/embedded`,formData);
-// };
