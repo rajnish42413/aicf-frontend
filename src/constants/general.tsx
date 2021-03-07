@@ -1,3 +1,1 @@
-export const API_URL = 'http://admin.aicf.in/api/';
-
-
+export const API_URL = 'https://admin.aicf.in/api/';
